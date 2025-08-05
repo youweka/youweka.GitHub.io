@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Financial Assistant - AI-Powered Money Planning</title>
+    <meta name="description" content="Get personalized investment recommendations, smart budget analysis, and financial planning advice based on your profile and goals.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e6ed;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 0;
+            background: rgba(10, 14, 39, 0.8);
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #64ffda, #4fc3f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: #8892b0;
+            margin-bottom: 1rem;
+        }
+
+        .description {
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid rgba(100, 255, 218, 0.3);
+            border-radius: 25px;
+            color: #e0e6ed;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .tab.active {
+            background: rgba(100, 255, 218, 0.2);
+            border-color: #64ffda;
+            color: #64ffda;
+        }
+
+        .tab:hover {
+            background: rgba(100, 255, 218, 0.1);
+            border-color: #64ffda;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .calculators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .calculator-card, .advisor-card {
+            background: rgba(26, 26, 46, 0.9);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 2px solid rgba(100, 255, 218, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calculator-card::before, .advisor-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #64ffda, #4fc3f7);
+        }
+
+        .calculator-card:hover, .advisor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(100, 255, 218, 0.4);
+        }
+
+        .calculator-title, .advisor-title {
+            color: #64ffda;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .calculator-icon {
+            font-size: 2rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #64ffda;
+            font-weight: 500;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(10, 14, 39, 0.8);
+            border: 2px solid rgba(100, 255, 218, 0.3);
+            border-radius: 8px;
+            color: #e0e6ed;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #64ffda;
+            box-shadow: 0 0 10px rgba(100, 255, 218, 0.2);
+        }
+
+        .calculate-btn, .analyze-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #1e3c72, #2a5298);
+            border: 2px solid #64ffda;
+            color: #64ffda;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .calculate-btn:hover, .analyze-btn:hover {
+            background: #64ffda;
+            color: #0a0e27;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(100, 255, 218, 0.3);
+        }
+
+        .result, .advice {
+            background: rgba(100, 255, 218, 0.1);
+            border: 1px solid rgba(100, 255, 218, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: left;
+            min-height: 60px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .result.empty, .advice.empty {
+            color: #8892b0;
+            font-weight: normal;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result.calculated, .advice.generated {
+            color: #e0e6ed;
+            background: rgba(100, 255, 218, 0.15);
+        }
+
+        .advice-section {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(100, 255, 218, 0.05);
+            border-radius: 8px;
+            border-left: 4px solid #64ffda;
+        }
+
+        .advice-title {
+            color: #64ffda;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .recommendation-card {
+            background: rgba(10, 14, 39, 0.6);
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .recommendation-title {
+            color: #64ffda;
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
+        }
+
+        .risk-low { background: rgba(76, 175, 80, 0.3); color: #4caf50; }
+        .risk-medium { background: rgba(255, 193, 7, 0.3); color: #ffc107; }
+        .risk-high { background: rgba(244, 67, 54, 0.3); color: #f44336; }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(100, 255, 218, 0.2);
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #64ffda, #4fc3f7);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .market-data {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .market-item {
+            background: rgba(10, 14, 39, 0.6);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(100, 255, 218, 0.2);
+        }
+
+        .market-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #64ffda;
+        }
+
+        .market-label {
+            font-size: 0.9rem;
+            color: #8892b0;
+            margin-top: 0.3rem;
+        }
+
+        .tips {
+            background: rgba(26, 26, 46, 0.9);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 2px solid rgba(100, 255, 218, 0.2);
+            margin-top: 2rem;
+        }
+
+        .tips h3 {
+            color: #64ffda;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .tip-item {
+            background: rgba(100, 255, 218, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #64ffda;
+        }
+
+        .tip-item strong {
+            color: #64ffda;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 1px solid rgba(100, 255, 218, 0.2);
+            margin-top: 3rem;
+            color: #8892b0;
+        }
+
+        .creator-info {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(100, 255, 218, 0.05);
+            border-radius: 8px;
+        }
+
+        .creator-info a {
+            color: #64ffda;
+            text-decoration: none;
+        }
+
+        .creator-info a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .calculators-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .calculator-card, .advisor-card {
+                padding: 1.5rem;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+
+            .tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tab {
+                min-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 class="logo">🤖 Smart Financial Assistant</h1>
+            <p class="tagline">AI-Powered Personal Finance Planning</p>
+            <p class="description">
+                Get personalized investment recommendations, smart budget analysis, and financial planning advice 
+                tailored to your age, income, and goals. The first AI financial advisor that actually understands Indian markets.
+            </p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('calculators')">📊 Basic Calculators</div>
+            <div class="tab" onclick="switchTab('advisor')">🎯 Smart Advisor</div>
+            <div class="tab" onclick="switchTab('planning')">📈 Goal Planning</div>
+            <div class="tab" onclick="switchTab('market')">📰 Market Insights</div>
+        </div>
+
+        <!-- Basic Calculators Tab -->
+        <div id="calculators" class="tab-content active">
+            <div class="calculators-grid">
+                <!-- EMI Calculator -->
+                <div class="calculator-card">
+                    <h2 class="calculator-title">
+                        <span class="calculator-icon">🏠</span>
+                        Loan EMI Calculator
+                    </h2>
+                    <div class="input-group">
+                        <label for="loanAmount">Loan Amount (₹)</label>
+                        <input type="number" id="loanAmount" placeholder="e.g., 500000" min="1000">
+                    </div>
+                    <div class="input-group">
+                        <label for="interestRate">Interest Rate (% per year)</label>
+                        <input type="number" id="interestRate" placeholder="e.g., 8.5" step="0.1" min="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label for="loanTenure">Loan Tenure (Years)</label>
+                        <input type="number" id="loanTenure" placeholder="e.g., 20" min="1">
+                    </div>
+                    <button class="calculate-btn" onclick="calculateEMI()">Calculate EMI</button>
+                    <div class="result empty" id="emiResult">
+                        Enter loan details to see your monthly EMI
+                    </div>
+                </div>
+
+                <!-- Investment Calculator -->
+                <div class="calculator-card">
+                    <h2 class="calculator-title">
+                        <span class="calculator-icon">📈</span>
+                        Investment Returns
+                    </h2>
+                    <div class="input-group">
+                        <label for="principal">Initial Investment (₹)</label>
+                        <input type="number" id="principal" placeholder="e.g., 100000" min="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="sipAmount">Monthly SIP (₹)</label>
+                        <input type="number" id="sipAmount" placeholder="e.g., 5000" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="returnRate">Expected Return (% per year)</label>
+                        <input type="number" id="returnRate" placeholder="e.g., 12" step="0.1" min="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label for="timePeriod">Investment Period (Years)</label>
+                        <input type="number" id="timePeriod" placeholder="e.g., 10" min="1">
+                    </div>
+                    <button class="calculate-btn" onclick="calculateInvestment()">Calculate Returns</button>
+                    <div class="result empty" id="investmentResult">
+                        Enter investment details to see future value
+                    </div>
+                </div>
+
+                <!-- Budget Calculator -->
+                <div class="calculator-card">
+                    <h2 class="calculator-title">
+                        <span class="calculator-icon">💳</span>
+                        Monthly Budget Planner
+                    </h2>
+                    <div class="input-group">
+                        <label for="monthlyIncome">Monthly Income (₹)</label>
+                        <input type="number" id="monthlyIncome" placeholder="e.g., 50000" min="1000">
+                    </div>
+                    <div class="input-group">
+                        <label for="essentialExpenses">Essential Expenses (₹)</label>
+                        <input type="number" id="essentialExpenses" placeholder="e.g., 25000" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="discretionaryExpenses">Discretionary Expenses (₹)</label>
+                        <input type="number" id="discretionaryExpenses" placeholder="e.g., 15000" min="0">
+                    </div>
+                    <button class="calculate-btn" onclick="calculateBudget()">Analyze Budget</button>
+                    <div class="result empty" id="budgetResult">
+                        Enter your expenses to see budget analysis
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Smart Advisor Tab -->
+        <div id="advisor" class="tab-content">
+            <div class="calculators-grid">
+                <div class="advisor-card full-width">
+                    <h2 class="advisor-title">
+                        <span class="calculator-icon">🧠</span>
+                        Personalized Investment Advisor
+                    </h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                        <div>
+                            <div class="input-group">
+                                <label for="age">Your Age</label>
+                                <input type="number" id="age" placeholder="e.g., 28" min="18" max="100">
+                            </div>
+                            <div class="input-group">
+                                <label for="income">Monthly Income (₹)</label>
+                                <input type="number" id="income" placeholder="e.g., 75000" min="10000">
+                            </div>
+                            <div class="input-group">
+                                <label for="investmentAmount">Available for Investment (₹)</label>
+                                <input type="number" id="investmentAmount" placeholder="e.g., 15000" min="500">
+                            </div>
+                            <div class="input-group">
+                                <label for="riskTolerance">Risk Tolerance</label>
+                                <select id="riskTolerance">
+                                    <option value="">Select your risk preference</option>
+                                    <option value="conservative">Conservative (Low Risk)</option>
+                                    <option value="moderate">Moderate (Medium Risk)</option>
+                                    <option value="aggressive">Aggressive (High Risk)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="input-group">
+                                <label for="investmentGoal">Primary Investment Goal</label>
+                                <select id="investmentGoal">
+                                    <option value="">Select your goal</option>
+                                    <option value="retirement">Retirement Planning</option>
+                                    <option value="house">Buy a House</option>
+                                    <option value="education">Child's Education</option>
+                                    <option value="travel">Travel/Vacation</option>
+                                    <option value="emergency">Emergency Fund</option>
+                                    <option value="wealth">Wealth Creation</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="timeHorizon">Investment Time Horizon</label>
+                                <select id="timeHorizon">
+                                    <option value="">Select time period</option>
+                                    <option value="short">1-3 years (Short Term)</option>
+                                    <option value="medium">3-7 years (Medium Term)</option>
+                                    <option value="long">7+ years (Long Term)</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="currentSavings">Current Savings (₹)</label>
+                                <input type="number" id="currentSavings" placeholder="e.g., 200000" min="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="hasEmergencyFund">Do you have 6 months emergency fund?</label>
+                                <select id="hasEmergencyFund">
+                                    <option value="">Select</option>
+                                    <option value="yes">Yes, I have emergency fund</option>
+                                    <option value="no">No, I don't have emergency fund</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="analyze-btn" onclick="generatePersonalizedAdvice()">Get My Personalized Plan</button>
+                    <div class="advice empty" id="personalizedAdvice">
+                        Fill in your details to get personalized investment recommendations tailored for you
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Goal Planning Tab -->
+        <div id="planning" class="tab-content">
+            <div class="calculators-grid">
+                <div class="calculator-card">
+                    <h2 class="calculator-title">
+                        <span class="calculator-icon">🎯</span>
+                        Retirement Planning
+                    </h2>
+                    <div class="input-group">
+                        <label for="currentAge">Current Age</label>
+                        <input type="number" id="currentAge" placeholder="e.g., 30" min="18" max="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="retirementAge">Desired Retirement Age</label>
+                        <input type="number" id="retirementAge" placeholder="e.g., 60" min="40" max="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="currentExpenses">Current Monthly Expenses (₹)</label>
+                        <input type="number" id="currentExpenses" placeholder="e.g., 40000" min="5000">
+                    </div>
+                    <div class="input-group">
+                        <label for="inflationRate">Expected Inflation Rate (%)</label>
+                        <input type="number" id="inflationRate" placeholder="e.g., 6" step="0.1" min="1" value="6">
+                    </div>
+                    <button class="calculate-btn" onclick="calculateRetirement()">Plan My Retirement</button>
+                    <div class="result empty" id="retirementResult">
+                        Enter your details to see retirement planning strategy
+                    </div>
+                </div>
+
+                <div class="calculator-card">
+                    <h2 class="calculator-title">
+                        <span class="calculator-icon">🏡</span>
+                        Home Purchase Planning
+                    </h2>
+                    <div class="input-group">
+                        <label for="housePrice">Target House Price (₹)</label>
+                        <input type="number" id="housePrice" placeholder="e.g., 5000000" min="500000">
+                    </div>
+                    <div class="input-group">
+                        <label for="downPayment">Down Payment % (typically 20%)</label>
+                        <input type="number" id="downPayment" placeholder="e.g., 20" min="10" max="100" value="20">
+                    </div>
+                    <div class="input-group">
+                        <label for="yearsToBuy">Years to Buy</label>
+                        <input type="number" id="yearsToBuy" placeholder="e.g., 5" min="1" max="20">
+                    </div>
+                    <div class="input-group">
+                        <label for="propertyAppreciation">Expected Property Appreciation (%)</label>
+                        <input type="number" id="propertyAppreciation" placeholder="e.g., 8" step="0.1" min="2" value="8">
+                    </div>
+                    <button class="calculate-btn" onclick="calculateHomePurchase()">Plan My Home Purchase</button>
+                    <div class="result empty" id="homeResult">
+                        Enter target house details to see your saving strategy
+                    </div>
+                </div>
+
+                <div class="calculator-card">
+                    <h2 class="calculator-title">
+                        <span class="calculator-icon">🎓</span>
+                        Child Education Planning
+                    </h2>
+                    <div class="input-group">
+                        <label for="childAge">Child's Current Age</label>
+                        <input type="number" id="childAge" placeholder="e.g., 5" min="0" max="15">
+                    </div>
+                    <div class="input-group">
+                        <label for="educationType">Education Type</label>
+                        <select id="educationType">
+                            <option value="">Select education type</option>
+                            <option value="engineering">Engineering (₹15-25 lakhs)</option>
+                            <option value="medical">Medical (₹20-50 lakhs)</option>
+                            <option value="mba">MBA (₹20-40 lakhs)</option>
+                            <option value="abroad">Study Abroad (₹50-100 lakhs)</option>
+                            <option value="custom">Custom Amount</option>
+                        </select>
+                    </div>
+                    <div class="input-group" id="customEducationCost" style="display: none;">
+                        <label for="educationCost">Expected Education Cost Today (₹)</label>
+                        <input type="number" id="educationCost" placeholder="e.g., 2000000" min="100000">
+                    </div>
+                    <div class="input-group">
+                        <label for="educationInflation">Education Inflation Rate (%)</label>
+                        <input type="number" id="educationInflation" placeholder="e.g., 10" step="0.1" min="5" value="10">
+                    </div>
+                    <button class="calculate-btn" onclick="calculateEducation()">Plan Education Fund</button>
+                    <div class="result empty" id="educationResult">
+                        Enter child's details to see education funding strategy
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Insights Tab -->
+        <div id="market" class="tab-content">
+            <div class="calculators-grid">
+                <div class="advisor-card full-width">
+                    <h2 class="advisor-title">
+                        <span class="calculator-icon">📊</span>
+                        Current Market Insights & Recommendations
+                    </h2>
+                    <div class="market-data">
+                        <div class="market-item">
+                            <div class="market-value">8.5%</div>
+                            <div class="market-label">Avg Home Loan Rate</div>
+                        </div>
+                        <div class="market-item">
+                            <div class="market-value">6.5%</div>
+                            <div class="market-label">FD Interest Rate</div>
+                        </div>
+                        <div class="market-item">
+                            <div class="market-value">12-15%</div>
+                            <div class="market-label">Equity Mutual Funds</div>
+                        </div>
+                        <div class="market-item">
+                            <div class="market-value">7-9%</div>
+                            <div class="market-label">Debt Mutual Funds</div>
+                        </div>
+                    </div>
+                    
+                    <div class="advice-section">
+                        <div class="advice-title">🔥 Current Market Opportunities</div>
+                        <div class="recommendation-card">
+                            <div class="recommendation-title">Small Cap Mutual Funds <span class="risk-badge risk-high">High Risk</span></div>
+                            <p>Small cap funds showing strong momentum. Good for aggressive investors with 5+ year horizon. Expected returns: 15-20%</p>
+                        </div>
+                        <div class="recommendation-card">
+                            <div class="recommendation-title">Gold ETFs <span class="risk-badge risk-low">Low Risk</span></div>
+                            <p>Gold prices stabilizing after recent highs. Good hedge against inflation. Allocate 5-10% of portfolio.</p>
+                        </div>
+                        <div class="recommendation-card">
+                            <div class="recommendation-title">Flexi Cap Funds <span class="risk-badge risk-medium">Medium Risk</span></div>
+                            <p>Best balance of growth and stability. Suitable for most investors. Expected returns: 12-14%</p>
+                        </div>
+                        <div class="recommendation-card">
+                            <div class="recommendation-title">ELSS Tax Saving Funds <span class="risk-badge risk-medium">Medium Risk</span></div>
+                            <p>Save tax under 80C while building wealth. 3-year lock-in but potential 12-15% returns.</p>
+                        </div>
+                    </div>
+
+                    <div class="advice-section">
+                        <div class="advice-title">⚠️ Market Alerts</div>
+                        <p><strong>Interest Rate Trend:</strong> RBI maintaining steady rates. Good time for fixed deposits and debt funds.</p>
+                        <p><strong>Equity Market:</strong> High valuations in large caps. Consider value funds and international diversification.</p>
+                        <p><strong>Real Estate:</strong> Property prices rising in tier-2 cities. REITs offering 7-9% dividend yield.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tips">
+            <h3>💡 Smart Money Tips</h3>
+            <div class="tips-grid">
+                <div class="tip-item">
+                    <strong>Asset Allocation by Age:</strong>
+                    Age 20s: 80% Equity, 20% Debt | Age 30s: 70% Equity, 30% Debt | Age 40s: 60% Equity, 40% Debt
+                </div>
+                <div class="tip-item">
+                    <strong>Emergency Fund Rule:</strong>
+                    Keep 6-12 months expenses in liquid funds or savings account. This should be your first financial goal.
+                </div>
+                <div class="tip-item">
+                    <strong>Tax-Saving Strategy:</strong>
+                    Use ELSS, PPF, EPF, and NPS to save up to ₹2 lakh in taxes annually under various sections.
+                </div>
+                <div class="tip-item">
+                    <strong>SIP Power:</strong>
+                    Start SIP even with ₹500/month. Rupee cost averaging reduces market timing risk and builds discipline.
+                </div>
+                <div class="tip-item">
+                    <strong>Debt Management:</strong>
+                    Pay off high-interest debt (credit cards) first. If loan interest > expected returns, prepay the loan.
+                </div>
+                <div class="tip-item">
+                    <strong>Insurance Rule:</strong>
+                    Term life insurance = 10-15x annual income. Health insurance = ₹5-10 lakhs minimum per family member.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Smart Financial Assistant. AI-powered financial planning for everyone.</p>
+            <div class="creator-info">
+                <p>Created by <strong>Your Name</strong> | 
+                <a href="mailto:your.email@example.com">Contact Me</a> | 
+                <a href="https://linkedin.com/in/yourprofile" target="_blank">LinkedIn</a></p>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                    🚀 First AI Financial Advisor for Indian Markets • Free Forever • No Registration Required
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function calculateEMI() {
+            const loanAmount = parseFloat(document.getElementById('loanAmount').value);
+            const interestRate = parseFloat(document.getElementById('interestRate').value);
+            const loanTenure = parseFloat(document.getElementById('loanTenure').value);
+            
+            if (!loanAmount || !interestRate || !loanTenure) {
+                document.getElementById('emiResult').innerHTML = 'Please fill all fields';
+                document.getElementById('emiResult').className = 'result empty';
+                return;
+            }
+            
+            const monthlyRate = interestRate / (12 * 100);
+            const numberOfPayments = loanTenure * 12;
+            
+            const emi = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
+                       (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+            
+            const totalAmount = emi * numberOfPayments;
+            const totalInterest = totalAmount - loanAmount;
+            
+            document.getElementById('emiResult').innerHTML = 
+                `<strong>Monthly EMI: ${formatCurrency(emi)}</strong><br>
+                Total Interest: ${formatCurrency(totalInterest)}<br>
+                Total Amount: ${formatCurrency(totalAmount)}<br><br>
+                <div class="advice-section">
+                <div class="advice-title">💡 EMI Optimization Tips</div>
+                ${emi > loanAmount * 0.004 ? 
+                    '⚠️ EMI is high (>40% of loan amount annually). Consider longer tenure or higher down payment.' : 
+                    '✅ EMI looks manageable for your loan amount.'}<br>
+                ${totalInterest > loanAmount * 0.8 ? 
+                    '💰 Consider prepaying ₹' + formatCurrency(Math.floor((totalInterest - loanAmount * 0.5) / numberOfPayments)) + '/month to save lakhs in interest.' : 
+                    '👍 Interest amount is reasonable for this tenure.'}
+                </div>`;
+            document.getElementById('emiResult').className = 'result calculated';
+        }
+
+        function calculateInvestment() {
+            const principal = parseFloat(document.getElementById('principal').value) || 0;
+            const sipAmount = parseFloat(document.getElementById('sipAmount').value) || 0;
+            const returnRate = parseFloat(document.getElementById('returnRate').value);
+            const timePeriod = parseFloat(document.getElementById('timePeriod').value);
+            
+            if (!returnRate || !timePeriod) {
+                document.getElementById('investmentResult').innerHTML = 'Please fill required fields';
+                document.getElementById('investmentResult').className = 'result empty';
+                return;
+            }
+            
+            const monthlyRate = returnRate / (12 * 100);
+            const months = timePeriod * 12;
+            
+            // Future value of lump sum
+            const futureValueLumpSum = principal * Math.pow(1 + returnRate/100, timePeriod);
+            
+            // Future value of SIP
+            let futureValueSIP = 0;
+            if (sipAmount > 0) {
+                futureValueSIP = sipAmount * (Math.pow(1 + monthlyRate, months) - 1) / monthlyRate;
+            }
+            
+            const totalFutureValue = futureValueLumpSum + futureValueSIP;
+            const totalInvestment = principal + (sipAmount * months);
+            const totalGains = totalFutureValue - totalInvestment;
+            
+            // Investment advice based on returns
+            let advice = '';
+            const effectiveRate = ((totalFutureValue / totalInvestment) ** (1/timePeriod) - 1) * 100;
+            
+            if (returnRate < 8) {
+                advice = '⚠️ Expected return is low. Consider equity mutual funds for better long-term growth.';
+            } else if (returnRate > 15) {
+                advice = '🚨 Expected return seems optimistic. Be realistic with expectations (10-12% is more reasonable).';
+            } else {
+                advice = '✅ Expected return looks reasonable for a diversified portfolio.';
+            }
+            
+            document.getElementById('investmentResult').innerHTML = 
+                `<strong>Future Value: ${formatCurrency(totalFutureValue)}</strong><br>
+                Total Investment: ${formatCurrency(totalInvestment)}<br>
+                Total Gains: ${formatCurrency(totalGains)}<br>
+                Effective Return: ${effectiveRate.toFixed(1)}% per annum<br><br>
+                <div class="advice-section">
+                <div class="advice-title">📈 Investment Insights</div>
+                ${advice}<br>
+                ${totalGains > totalInvestment ? 
+                    '🎉 Excellent! Your money will more than double with compound growth.' :
+                    '💪 Keep investing regularly to harness the power of compounding.'}
+                </div>`;
+            document.getElementById('investmentResult').className = 'result calculated';
+        }
+
+        function calculateBudget() {
+            const income = parseFloat(document.getElementById('monthlyIncome').value);
+            const essential = parseFloat(document.getElementById('essentialExpenses').value) || 0;
+            const discretionary = parseFloat(document.getElementById('discretionaryExpenses').value) || 0;
+            
+            if (!income) {
+                document.getElementById('budgetResult').innerHTML = 'Please enter your monthly income';
+                document.getElementById('budgetResult').className = 'result empty';
+                return;
+            }
+            
+            const totalExpenses = essential + discretionary;
+            const surplus = income - totalExpenses;
+            const savingsRate = (surplus / income) * 100;
+            const essentialPercent = (essential / income) * 100;
+            const discretionaryPercent = (discretionary / income) * 100;
+            
+            let analysis = '';
+            let budgetAdvice = '';
+            
+            if (surplus > 0) {
+                analysis = `<strong>Monthly Surplus: ${formatCurrency(surplus)}</strong><br>
+                           Savings Rate: ${savingsRate.toFixed(1)}%<br>
+                           Essential: ${essentialPercent.toFixed(1)}% | Discretionary: ${discretionaryPercent.toFixed(1)}%<br><br>`;
+                
+                if (savingsRate >= 30) {
+                    budgetAdvice = '🎉 Excellent savings rate! You\'re on track for early financial independence.';
+                } else if (savingsRate >= 20) {
+                    budgetAdvice = '✅ Great savings rate! Consider increasing investments in equity mutual funds.';
+                } else if (savingsRate >= 10) {
+                    budgetAdvice = '👍 Good start! Try to increase savings to 20% by reducing discretionary expenses.';
+                } else {
+                    budgetAdvice = '⚠️ Low savings rate. Focus on cutting discretionary expenses and increasing income.';
+                }
+                
+                if (essentialPercent > 60) {
+                    budgetAdvice += '<br>💡 Essential expenses are high. Look for ways to optimize housing, food, and transport costs.';
+                }
+            } else {
+                analysis = `<strong>Monthly Deficit: ${formatCurrency(Math.abs(surplus))}</strong><br>
+                           ❌ Expenses exceed income<br><br>`;
+                budgetAdvice = '🚨 Urgent: Reduce expenses or increase income. Start with discretionary spending cuts.';
+            }
+            
+            document.getElementById('budgetResult').innerHTML = 
+                analysis + 
+                `<div class="advice-section">
+                <div class="advice-title">💰 Budget Optimization</div>
+                ${budgetAdvice}<br><br>
+                <strong>Recommended Allocation:</strong><br>
+                • Essential: 50% (${formatCurrency(income * 0.5)})<br>
+                • Discretionary: 30% (${formatCurrency(income * 0.3)})<br>
+                • Savings/Investment: 20% (${formatCurrency(income * 0.2)})
+                </div>`;
+            document.getElementById('budgetResult').className = 'result calculated';
+        }
+
+        function generatePersonalizedAdvice() {
+            const age = parseInt(document.getElementById('age').value);
+            const income = parseFloat(document.getElementById('income').value);
+            const investmentAmount = parseFloat(document.getElementById('investmentAmount').value);
+            const riskTolerance = document.getElementById('riskTolerance').value;
+            const investmentGoal = document.getElementById('investmentGoal').value;
+            const timeHorizon = document.getElementById('timeHorizon').value;
+            const currentSavings = parseFloat(document.getElementById('currentSavings').value) || 0;
+            const hasEmergencyFund = document.getElementById('hasEmergencyFund').value;
+            
+            if (!age || !income || !investmentAmount || !riskTolerance || !investmentGoal || !timeHorizon) {
+                document.getElementById('personalizedAdvice').innerHTML = 'Please fill all required fields to get personalized advice';
+                document.getElementById('personalizedAdvice').className = 'advice empty';
+                return;
+            }
+            
+            let advice = `<div class="advice-section">
+                <div class="advice-title">🎯 Your Personalized Investment Plan</div>
+                <strong>Profile:</strong> ${age} years old, ₹${formatCurrency(income)} monthly income, ${riskTolerance} risk tolerance<br>
+                <strong>Goal:</strong> ${investmentGoal.charAt(0).toUpperCase() + investmentGoal.slice(1)} over ${timeHorizon} term<br><br>`;
+            
+            // Emergency fund check
+            if (hasEmergencyFund === 'no') {
+                advice += `<div class="recommendation-card">
+                    <div class="recommendation-title">🚨 Priority #1: Emergency Fund</div>
+                    <p>Build ${formatCurrency(income * 6)} emergency fund first. Keep in liquid funds or high-yield savings. Allocate ₹${formatCurrency(Math.min(investmentAmount * 0.5, income * 0.15))} monthly until complete.</p>
+                </div>`;
+            }
+            
+            // Asset allocation based on age and risk
+            let equityPercent, debtPercent, equityAmount, debtAmount;
+            
+            if (age <= 30) {
+                equityPercent = riskTolerance === 'aggressive' ? 85 : riskTolerance === 'moderate' ? 75 : 60;
+            } else if (age <= 40) {
+                equityPercent = riskTolerance === 'aggressive' ? 75 : riskTolerance === 'moderate' ? 65 : 50;
+            } else {
+                equityPercent = riskTolerance === 'aggressive' ? 65 : riskTolerance === 'moderate' ? 55 : 40;
+            }
+            
+            debtPercent = 100 - equityPercent;
+            equityAmount = investmentAmount * (equityPercent / 100);
+            debtAmount = investmentAmount * (debtPercent / 100);
+            
+            advice += `<div class="recommendation-card">
+                <div class="recommendation-title">📊 Recommended Asset Allocation</div>
+                <div style="margin: 1rem 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Equity (${equityPercent}%)</span>
+                        <span>${formatCurrency(equityAmount)}/month</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${equityPercent}%"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Debt (${debtPercent}%)</span>
+                        <span>${formatCurrency(debtAmount)}/month</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${debtPercent}%"></div>
+                    </div>
+                </div>
+            </div>`;
+            
+            // Specific fund recommendations
+            advice += `<div class="recommendation-card">
+                <div class="recommendation-title">🎯 Specific Fund Recommendations</div>
+                <strong>Equity Allocation (${formatCurrency(equityAmount)}/month):</strong><br>
+                • Large Cap Fund: 40% (${formatCurrency(equityAmount * 0.4)}) <span class="risk-badge risk-medium">Medium Risk</span><br>
+                • Mid Cap Fund: 35% (${formatCurrency(equityAmount * 0.35)}) <span class="risk-badge risk-high">High Risk</span><br>
+                • International Fund: 25% (${formatCurrency(equityAmount * 0.25)}) <span class="risk-badge risk-medium">Medium Risk</span><br><br>
+                <strong>Debt Allocation (${formatCurrency(debtAmount)}/month):</strong><br>
+                • Liquid Fund: 60% (${formatCurrency(debtAmount * 0.6)}) <span class="risk-badge risk-low">Low Risk</span><br>
+                • Corporate Bond Fund: 40% (${formatCurrency(debtAmount * 0.4)}) <span class="risk-badge risk-low">Low Risk</span>
+            </div>`;
+            
+            // Goal-specific advice
+            let goalAdvice = '';
+            switch(investmentGoal) {
+                case 'retirement':
+                    const retirementCorpus = investmentAmount * 12 * (65 - age) * 1.12; // Assuming 12% return
+                    goalAdvice = `Target retirement corpus: ${formatCurrency(retirementCorpus)}. Increase SIP by 10% annually. Consider NPS for additional tax benefits.`;
+                    break;
+                case 'house':
+                    goalAdvice = `For home purchase, keep 20% in liquid funds for down payment flexibility. Consider real estate funds for additional exposure.`;
+                    break;
+                case 'education':
+                    goalAdvice = `Education costs rise 10-12% annually. Start early and consider child-specific education funds. Increase allocation as child grows.`;
+                    break;
+                case 'travel':
+                    goalAdvice = `For travel goals, lean towards debt funds in final 2 years to reduce volatility. Consider travel-specific recurring deposits.`;
+                    break;
+                case 'emergency':
+                    goalAdvice = `Focus on liquid funds and ultra-short duration funds. Target 6-12 months of expenses. Avoid equity for emergency funds.`;
+                    break;
+                case 'wealth':
+                    goalAdvice = `Perfect age for wealth creation! Focus on growth assets. Consider ELSS for tax saving. Review and rebalance annually.`;
+                    break;
+            }
+            
+            advice += `<div class="recommendation-card">
+                <div class="recommendation-title">🎯 Goal-Specific Strategy</div>
+                <p>${goalAdvice}</p>
+            </div>`;
+            
+            // Tax optimization
+            if (income > 25000) {
+                advice += `<div class="recommendation-card">
+                    <div class="recommendation-title">💰 Tax Optimization</div>
+                    • ELSS Funds: ₹${Math.min(12500, investmentAmount * 0.3)}/month (80C deduction)<br>
+                    • NPS: ₹${Math.min(4167, investmentAmount * 0.2)}/month (additional 80CCD deduction)<br>
+                    • Potential tax saving: ₹${formatCurrency(Math.min(62500, investmentAmount * 6))}/year
+                </div>`;
+            }
+            
+            advice += `</div>`;
+            
+            document.getElementById('personalizedAdvice').innerHTML = advice;
+            document.getElementById('personalizedAdvice').className = 'advice generated';
+        }
+
+        function calculateRetirement() {
+            const currentAge = parseInt(document.getElementById('currentAge').value);
+            const retirementAge = parseInt(document.getElementById('retirementAge').value);
+            const currentExpenses = parseFloat(document.getElementById('currentExpenses').value);
+            const inflationRate = parseFloat(document.getElementById('inflationRate').value);
+            
+            if (!currentAge || !retirementAge || !currentExpenses || !inflationRate) {
+                document.getElementById('retirementResult').innerHTML = 'Please fill all fields';
+                document.getElementById('retirementResult').className = 'result empty';
+                return;
+            }
+            
+            const yearsToRetirement = retirementAge - currentAge;
+            const futureExpenses = currentExpenses * Math.pow(1 + inflationRate/100, yearsToRetirement);
+            const requiredCorpus = futureExpenses * 12 * 25; // 25x annual expenses
+            const monthlyTarget = requiredCorpus / (yearsToRetirement * 12) / 1.12; // Assuming 12% returns
+            
+            document.getElementById('retirementResult').innerHTML = 
+                `<strong>Retirement Planning Summary:</strong><br>
+                Years to retirement: ${yearsToRetirement} years<br>
+                Future monthly expenses: ${formatCurrency(futureExpenses)}<br>
+                Required retirement corpus: ${formatCurrency(requiredCorpus)}<br>
+                <strong>Monthly SIP needed: ${formatCurrency(monthlyTarget)}</strong><br><br>
+                <div class="advice-section">
+                <div class="advice-title">🎯 Retirement Strategy</div>
+                • Start with equity-heavy portfolio (70-80%)<br>
+                • Gradually shift to debt as you near retirement<br>
+                • Consider NPS for additional tax benefits<br>
+                • Review and increase SIP by 10% annually<br>
+                ${monthlyTarget > 50000 ? '⚠️ Target seems high. Consider reducing expenses or working longer.' : '✅ Achievable target with disciplined investing.'}
+                </div>`;
+            document.getElementById('retirementResult').className = 'result calculated';
+        }
+
+        function calculateHomePurchase() {
+            const housePrice = parseFloat(document.getElementById('housePrice').value);
+            const downPaymentPercent = parseFloat(document.getElementById('downPayment').value);
+            const yearsToBuy = parseFloat(document.getElementById('yearsToBuy').value);
+            const propertyAppreciation = parseFloat(document.getElementById('propertyAppreciation').value);
+            
+            if (!housePrice || !downPaymentPercent || !yearsToBuy || !propertyAppreciation) {
+                document.getElementById('homeResult').innerHTML = 'Please fill all fields';
+                document.getElementById('homeResult').className = 'result empty';
+                return;
+            }
+            
+            const futureHousePrice = housePrice * Math.pow(1 + propertyAppreciation/100, yearsToBuy);
+            const downPaymentRequired = futureHousePrice * (downPaymentPercent/100);
+            const loanAmount = futureHousePrice - downPaymentRequired;
+            const monthlySaving = downPaymentRequired / (yearsToBuy * 12) / 1.08; // Assuming 8% returns on savings
+            
+            // EMI calculation for reference
+            const emi = (loanAmount * 0.00708 * Math.pow(1.00708, 240)) / (Math.pow(1.00708, 240) - 1); // 8.5% for 20 years
+            
+            document.getElementById('homeResult').innerHTML = 
+                `<strong>Home Purchase Planning:</strong><br>
+                Current house price: ${formatCurrency(housePrice)}<br>
+                Future house price: ${formatCurrency(futureHousePrice)}<br>
+                Down payment needed: ${formatCurrency(downPaymentRequired)}<br>
+                <strong>Monthly saving required: ${formatCurrency(monthlySaving)}</strong><br>
+                Estimated loan amount: ${formatCurrency(loanAmount)}<br>
+                Estimated EMI: ${formatCurrency(emi)}<br><br>
+                <div class="advice-section">
+                <div class="advice-title">🏡 Home Buying Strategy</div>
+                • Save in debt funds for down payment (lower risk)<br>
+                • Start house hunting 1 year before target<br>
+                • Consider location growth potential<br>
+                • Factor in registration, interiors (add 10-15%)<br>
+                ${emi > 40000 ? '⚠️ High EMI expected. Consider lower price range or longer tenure.' : '✅ EMI seems manageable based on typical income levels.'}
+                </div>`;
+            document.getElementById('homeResult').className = 'result calculated';
+        }
+
+        function calculateEducation() {
+            const childAge = parseInt(document.getElementById('childAge').value);
+            const educationType = document.getElementById('educationType').value;
+            const customCost = parseFloat(document.getElementById('educationCost').value);
+            const educationInflation = parseFloat(document.getElementById('educationInflation').value);
+            
+            if (!childAge || !educationType || !educationInflation) {
+                document.getElementById('educationResult').innerHTML = 'Please fill all required fields';
+                document.getElementById('educationResult').className = 'result empty';
+                return;
+            }
+            
+            let currentCost;
+            switch(educationType) {
+                case 'engineering': currentCost = 2000000; break;
+                case 'medical': currentCost = 3500000; break;
+                case 'mba': currentCost = 3000000; break;
+                case 'abroad': currentCost = 7500000; break;
+                case 'custom': currentCost = customCost; break;
+            }
+            
+            const yearsToEducation = 18 - childAge;
+            const futureEducationCost = currentCost * Math.pow(1 + educationInflation/100, yearsToEducation);
+            const monthlyTarget = futureEducationCost / (yearsToEducation * 12) / 1.12; // Assuming 12% returns
+            
+            document.getElementById('educationResult').innerHTML = 
+                `<strong>Education Fund Planning:</strong><br>
+                Child's current age: ${childAge} years<br>
+                Years to education: ${yearsToEducation} years<br>
+                Current education cost: ${formatCurrency(currentCost)}<br>
+                Future education cost: ${formatCurrency(futureEducationCost)}<br>
+                <strong>Monthly SIP needed: ${formatCurrency(monthlyTarget)}</strong><br><br>
+                <div class="advice-section">
+                <div class="advice-title">🎓 Education Fund Strategy</div>
+                • Start with equity funds for long-term growth<br>
+                • Switch to debt funds 2-3 years before need<br>
+                • Consider child-specific education plans<br>
+                • Education loan as backup (lower interest)<br>
+                ${monthlyTarget > 25000 ? '⚠️ High monthly target. Consider education loans to supplement.' : '✅ Achievable target with early planning.'}
+                </div>`;
+            document.getElementById('educationResult').className = 'result calculated';
+        }
+
+        // Show/hide custom education cost field
+        document.getElementById('educationType').addEventListener('change', function() {
+            const customField = document.getElementById('customEducationCost');
+            if (this.value === 'custom') {
+                customField.style.display = 'block';
+            } else {
+                customField.style.display = 'none';
+            }
+        });
+
+        // Add input event listeners for validation
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value < 0) {
+                    this.value = 0;
+                }
+            });
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Any initialization code can go here
+            console.log('Smart Financial Assistant loaded successfully!');
+        });
+    </script>
+</body>
+</html>
