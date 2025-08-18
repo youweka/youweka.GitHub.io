@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Financial Assistant - AI-Powered Money Planning</title>
+    <title>Smart Financial Assistant - Comprehensive Money Planning</title>
     <meta name="description" content="Get personalized investment recommendations, smart budget analysis, and financial planning advice based on your profile and goals.">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -414,6 +415,90 @@
             text-decoration: underline;
         }
 
+        .chart-container {
+            margin: 1rem 0;
+            background: rgba(10, 14, 39, 0.6);
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid rgba(100, 255, 218, 0.2);
+        }
+
+        .chart-container canvas {
+            max-height: 400px;
+        }
+
+        .definition-box {
+            background: rgba(100, 255, 218, 0.05);
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .definition-title {
+            color: #64ffda;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .credit-score-range {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .score-item {
+            background: rgba(10, 14, 39, 0.6);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid;
+        }
+
+        .score-excellent { border-color: #4caf50; }
+        .score-good { border-color: #8bc34a; }
+        .score-fair { border-color: #ffc107; }
+        .score-poor { border-color: #ff9800; }
+        .score-bad { border-color: #f44336; }
+
+        .year-plan {
+            background: rgba(26, 26, 46, 0.9);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 1rem 0;
+            border: 2px solid rgba(100, 255, 218, 0.2);
+        }
+
+        .year-header {
+            color: #64ffda;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid rgba(100, 255, 218, 0.2);
+            padding-bottom: 0.5rem;
+        }
+
+        .year-goals {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .goal-category {
+            background: rgba(100, 255, 218, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 4px solid #64ffda;
+        }
+
+        .goal-title {
+            color: #64ffda;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
         @media (max-width: 768px) {
             .calculators-grid {
                 grid-template-columns: 1fr;
@@ -441,11 +526,11 @@
 <body>
     <header>
         <div class="container">
-            <h1 class="logo">🤖 Smart Financial Assistant</h1>
-            <p class="tagline">AI-Powered Personal Finance Planning</p>
+            <h1 class="logo">Smart Financial Assistant</h1>
+            <p class="tagline">Comprehensive Personal Finance Planning</p>
             <p class="description">
                 Get personalized investment recommendations, smart budget analysis, and financial planning advice 
-                tailored to your age, income, and goals. The first AI financial advisor that actually understands Indian markets.
+                tailored to your age, income, and goals. The comprehensive financial advisor that understands Indian markets.
             </p>
         </div>
     </header>
@@ -457,6 +542,8 @@
             <div class="tab" onclick="switchTab('planning')">📈 Goal Planning</div>
             <div class="tab" onclick="switchTab('portfolio')">📋 Portfolio Manager</div>
             <div class="tab" onclick="switchTab('market')">📰 Market Insights</div>
+            <div class="tab" onclick="switchTab('credit')">💳 Credit Building</div>
+            <div class="tab" onclick="switchTab('freshie')">🎓 5-Year Freshie Guide</div>
         </div>
 
         <!-- Basic Calculators Tab -->
@@ -468,6 +555,10 @@
                         <span class="calculator-icon">🏠</span>
                         Loan EMI Calculator
                     </h2>
+                    <div class="definition-box">
+                        <div class="definition-title">What is EMI?</div>
+                        EMI (Equated Monthly Installment) is the fixed amount you pay every month to repay a loan. It consists of both principal (original loan amount) and interest components. EMI = [P × r × (1+r)ⁿ] / [(1+r)ⁿ - 1], where P = Principal, r = monthly interest rate, n = number of months.
+                    </div>
                     <div class="input-group">
                         <label for="loanAmount">Loan Amount (₹)</label>
                         <input type="number" id="loanAmount" placeholder="e.g., 500000" min="1000">
@@ -483,6 +574,9 @@
                     <button class="calculate-btn" onclick="calculateEMI()">Calculate EMI</button>
                     <div class="result empty" id="emiResult">
                         Enter loan details to see your monthly EMI
+                    </div>
+                    <div class="chart-container" id="emiChart" style="display: none;">
+                        <canvas id="emiChartCanvas"></canvas>
                     </div>
                     <div class="data-sources">
                         <h4>Formula Reference:</h4>
@@ -502,6 +596,12 @@
                         <span class="calculator-icon">📈</span>
                         Investment Returns
                     </h2>
+                    <div class="definition-box">
+                        <div class="definition-title">Investment Concepts</div>
+                        <strong>SIP (Systematic Investment Plan):</strong> Regular monthly investments that benefit from rupee cost averaging.<br>
+                        <strong>Compound Interest:</strong> Earning returns on your returns - the 8th wonder of the world according to Einstein.<br>
+                        <strong>Future Value:</strong> What your money will be worth after accounting for growth/returns.
+                    </div>
                     <div class="input-group">
                         <label for="principal">Initial Investment (₹)</label>
                         <input type="number" id="principal" placeholder="e.g., 100000" min="100">
@@ -522,6 +622,9 @@
                     <div class="result empty" id="investmentResult">
                         Enter investment details to see future value
                     </div>
+                    <div class="chart-container" id="investmentChart" style="display: none;">
+                        <canvas id="investmentChartCanvas"></canvas>
+                    </div>
                     <div class="data-sources">
                         <h4>Formula Reference:</h4>
                         <strong>Future Value of Lump Sum: FV = PV × (1 + r)ⁿ</strong><br>
@@ -541,6 +644,12 @@
                         <span class="calculator-icon">💳</span>
                         Monthly Budget Planner
                     </h2>
+                    <div class="definition-box">
+                        <div class="definition-title">Budget Components</div>
+                        <strong>Essential Expenses (Needs):</strong> Rent, groceries, utilities, insurance - things you can't live without.<br>
+                        <strong>Discretionary Expenses (Wants):</strong> Dining out, entertainment, shopping - nice to have but not essential.<br>
+                        <strong>Savings Rate:</strong> Percentage of income saved - target 20% minimum for financial health.
+                    </div>
                     <div class="input-group">
                         <label for="monthlyIncome">Monthly Income (₹)</label>
                         <input type="number" id="monthlyIncome" placeholder="e.g., 50000" min="1000">
@@ -556,6 +665,9 @@
                     <button class="calculate-btn" onclick="calculateBudget()">Analyze Budget</button>
                     <div class="result empty" id="budgetResult">
                         Enter your expenses to see budget analysis
+                    </div>
+                    <div class="chart-container" id="budgetChart" style="display: none;">
+                        <canvas id="budgetChartCanvas"></canvas>
                     </div>
                     <div class="data-sources">
                         <h4>Formula Reference:</h4>
@@ -579,6 +691,12 @@
                         <span class="calculator-icon">🧠</span>
                         Personalized Investment Advisor
                     </h2>
+                    <div class="definition-box">
+                        <div class="definition-title">Investment Advisory Concepts</div>
+                        <strong>Risk Tolerance:</strong> Your ability and willingness to lose money in exchange for potential higher returns.<br>
+                        <strong>Asset Allocation:</strong> How you divide your investments among different asset categories (equity, debt, gold).<br>
+                        <strong>Time Horizon:</strong> How long you plan to keep your money invested before needing it.
+                    </div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
                         <div>
                             <div class="input-group">
@@ -655,6 +773,12 @@
                         <span class="calculator-icon">🎯</span>
                         Retirement Planning
                     </h2>
+                    <div class="definition-box">
+                        <div class="definition-title">Retirement Planning Concepts</div>
+                        <strong>Retirement Corpus:</strong> Total amount needed to maintain your lifestyle post-retirement.<br>
+                        <strong>4% Withdrawal Rule:</strong> Withdraw 4% annually from your corpus to last 25 years (25x annual expenses rule).<br>
+                        <strong>Inflation:</strong> The rate at which prices increase, reducing your money's purchasing power over time.
+                    </div>
                     <div class="input-group">
                         <label for="currentAge">Current Age</label>
                         <input type="number" id="currentAge" placeholder="e.g., 30" min="18" max="100">
@@ -675,6 +799,9 @@
                     <div class="result empty" id="retirementResult">
                         Enter your details to see retirement planning strategy
                     </div>
+                    <div class="chart-container" id="retirementChart" style="display: none;">
+                        <canvas id="retirementChartCanvas"></canvas>
+                    </div>
                     <div class="data-sources">
                         <h4>Formula Reference:</h4>
                         <strong>Future Expenses = Current Expenses × (1 + Inflation Rate)ⁿ</strong><br>
@@ -693,6 +820,12 @@
                         <span class="calculator-icon">🏡</span>
                         Home Purchase Planning
                     </h2>
+                    <div class="definition-box">
+                        <div class="definition-title">Home Buying Financial Terms</div>
+                        <strong>Down Payment:</strong> Upfront payment (typically 20% of property value) that reduces your loan amount.<br>
+                        <strong>Property Appreciation:</strong> Rate at which property values increase over time.<br>
+                        <strong>Loan-to-Value (LTV):</strong> Percentage of property value that the bank will finance (typically 80%).
+                    </div>
                     <div class="input-group">
                         <label for="housePrice">Target House Price (₹)</label>
                         <input type="number" id="housePrice" placeholder="e.g., 5000000" min="500000">
@@ -731,6 +864,12 @@
                         <span class="calculator-icon">🎓</span>
                         Child Education Planning
                     </h2>
+                    <div class="definition-box">
+                        <div class="definition-title">Education Planning Terms</div>
+                        <strong>Education Inflation:</strong> Rate at which education costs increase (typically 10-12% annually in India).<br>
+                        <strong>Education Loan:</strong> Specialized loan for higher education with lower interest rates and flexible repayment.<br>
+                        <strong>Step-up SIP:</strong> Gradually increasing your monthly investment amount as your income grows.
+                    </div>
                     <div class="input-group">
                         <label for="childAge">Child's Current Age</label>
                         <input type="number" id="childAge" placeholder="e.g., 5" min="0" max="15">
@@ -781,6 +920,13 @@
                         <span class="calculator-icon">📋</span>
                         Portfolio Risk & Return Calculator
                     </h2>
+                    <div class="definition-box">
+                        <div class="definition-title">Portfolio Management Concepts</div>
+                        <strong>Asset Allocation:</strong> Distributing investments across different asset classes to balance risk and return.<br>
+                        <strong>Portfolio Risk (Volatility):</strong> Measure of price fluctuations - higher volatility means more unpredictable returns.<br>
+                        <strong>Sharpe Ratio:</strong> Risk-adjusted return metric - higher ratio means better return per unit of risk taken.<br>
+                        <strong>Correlation:</strong> How different assets move relative to each other - diversification benefits from low correlation.
+                    </div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
                         <div>
                             <h3 style="color: #64ffda; margin-bottom: 1rem;">Asset Allocation (%)</h3>
@@ -845,6 +991,9 @@
                     <div class="advice empty" id="portfolioResult">
                         Enter your asset allocation and expected returns to see portfolio analysis
                     </div>
+                    <div class="chart-container" id="portfolioChart" style="display: none;">
+                        <canvas id="portfolioChartCanvas"></canvas>
+                    </div>
                     <div class="data-sources">
                         <h4>Formula Reference:</h4>
                         <strong>Portfolio Return = Σ(Weight_i × Return_i)</strong><br>
@@ -869,6 +1018,13 @@
                         <span class="calculator-icon">📊</span>
                         Current Market Insights & Recommendations
                     </h2>
+                    <div class="definition-box">
+                        <div class="definition-title">Market Analysis Terms</div>
+                        <strong>Yield:</strong> Annual income return on an investment expressed as a percentage of its cost.<br>
+                        <strong>P/E Ratio:</strong> Price-to-Earnings ratio indicating if stocks are expensive relative to earnings.<br>
+                        <strong>Market Cap:</strong> Total value of a company's shares - Large Cap (>₹20,000 cr), Mid Cap (₹5,000-20,000 cr), Small Cap (<₹5,000 cr).<br>
+                        <strong>Sectoral Rotation:</strong> Investment strategy of moving money between different industry sectors based on economic cycles.
+                    </div>
                     <div class="market-data">
                         <div class="market-item">
                             <div class="market-value">8.5%</div>
@@ -939,40 +1095,286 @@
             </div>
         </div>
 
+        <!-- Credit Building Tab -->
+        <div id="credit" class="tab-content">
+            <div class="calculators-grid">
+                <div class="advisor-card full-width">
+                    <h2 class="advisor-title">
+                        <span class="calculator-icon">💳</span>
+                        Credit Score Building & Management
+                    </h2>
+                    <div class="definition-box">
+                        <div class="definition-title">Credit Score Fundamentals</div>
+                        <strong>Credit Score:</strong> A 3-digit number (300-900) representing your creditworthiness based on your credit history.<br>
+                        <strong>CIBIL Score:</strong> India's most widely used credit score, calculated by Credit Information Bureau India Limited.<br>
+                        <strong>Credit Utilization Ratio:</strong> Percentage of available credit limit you're using - keep below 30% for good score.<br>
+                        <strong>Credit History Length:</strong> How long you've been using credit - longer history generally means better score.
+                    </div>
+                    
+                    <div class="credit-score-range">
+                        <div class="score-item score-excellent">
+                            <div class="market-value">750-900</div>
+                            <div class="market-label">Excellent Credit</div>
+                        </div>
+                        <div class="score-item score-good">
+                            <div class="market-value">700-749</div>
+                            <div class="market-label">Good Credit</div>
+                        </div>
+                        <div class="score-item score-fair">
+                            <div class="market-value">650-699</div>
+                            <div class="market-label">Fair Credit</div>
+                        </div>
+                        <div class="score-item score-poor">
+                            <div class="market-value">600-649</div>
+                            <div class="market-label">Poor Credit</div>
+                        </div>
+                        <div class="score-item score-bad">
+                            <div class="market-value">300-599</div>
+                            <div class="market-label">Bad Credit</div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="currentCreditScore">Current Credit Score (if known)</label>
+                        <input type="number" id="currentCreditScore" placeholder="e.g., 720" min="300" max="900">
+                    </div>
+                    <div class="input-group">
+                        <label for="creditCardLimit">Total Credit Card Limit (₹)</label>
+                        <input type="number" id="creditCardLimit" placeholder="e.g., 200000" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="creditCardUsage">Monthly Credit Card Usage (₹)</label>
+                        <input type="number" id="creditCardUsage" placeholder="e.g., 50000" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="creditAge">Credit History Age (Years)</label>
+                        <input type="number" id="creditAge" placeholder="e.g., 3" min="0" max="30">
+                    </div>
+                    <div class="input-group">
+                        <label for="paymentHistory">Payment History</label>
+                        <select id="paymentHistory">
+                            <option value="">Select payment track record</option>
+                            <option value="excellent">Always pay on time (100%)</option>
+                            <option value="good">Mostly on time (90-99%)</option>
+                            <option value="fair">Sometimes late (80-89%)</option>
+                            <option value="poor">Often late (below 80%)</option>
+                        </select>
+                    </div>
+                    <button class="analyze-btn" onclick="analyzeCreditProfile()">Analyze My Credit Profile</button>
+                    <div class="advice empty" id="creditResult">
+                        Enter your credit details to get personalized credit building strategy
+                    </div>
+
+                    <div class="advice-section">
+                        <div class="advice-title">🚀 Credit Building Action Plan</div>
+                        <div class="recommendation-card">
+                            <div class="recommendation-title">Phase 1: Foundation Building (0-6 months)</div>
+                            <p><strong>Get Your First Credit Card:</strong> Start with secured credit card if no credit history. Use 10-30% of limit monthly and pay in full before due date.</p>
+                            <p><strong>Set Up Auto-Pay:</strong> Never miss payment dates - 35% of your score depends on payment history.</p>
+                            <p><strong>Monitor Credit Report:</strong> Get free annual credit report from CIBIL, Experian, Equifax, or CRIF High Mark.</p>
+                        </div>
+                        <div class="recommendation-card">
+                            <div class="recommendation-title">Phase 2: Score Optimization (6-18 months)</div>
+                            <p><strong>Multiple Credit Types:</strong> Add personal loan, auto loan, or education loan to show mixed credit handling capability.</p>
+                            <p><strong>Credit Limit Increases:</strong> Request limit increases every 6 months to improve credit utilization ratio.</p>
+                            <p><strong>Maintain Old Cards:</strong> Keep your oldest credit card active - length of credit history matters (15% of score).</p>
+                        </div>
+                        <div class="recommendation-card">
+                            <div class="recommendation-title">Phase 3: Advanced Strategies (18+ months)</div>
+                            <p><strong>Premium Cards:</strong> Upgrade to premium credit cards once score crosses 750 for better rewards and higher limits.</p>
+                            <p><strong>Business Credit:</strong> Consider business credit cards to separate personal and business expenses.</p>
+                            <p><strong>Credit Monitoring:</strong> Use apps like CRED, Payme, or Paisabazaar for ongoing score tracking.</p>
+                        </div>
+                    </div>
+
+                    <div class="data-sources">
+                        <h4>Credit Score Factors & Weightage:</h4>
+                        • <strong>Payment History (35%):</strong> Most important factor - never miss payments<br>
+                        • <strong>Credit Utilization (30%):</strong> Keep below 30% of total credit limit<br>
+                        • <strong>Credit History Length (15%):</strong> Longer history is better<br>
+                        • <strong>Credit Mix (10%):</strong> Different types of credit (cards, loans)<br>
+                        • <strong>New Credit Inquiries (10%):</strong> Limit hard inquiries to 2-3 per year<br><br>
+                        <strong>References:</strong><br>
+                        • <a href="https://www.cibil.com/credit-score-range" target="_blank">CIBIL Score Ranges - TransUnion CIBIL</a><br>
+                        • <a href="https://www.rbi.org.in/Scripts/BS_SpeechesView.aspx?Id=1044" target="_blank">Credit Information System - RBI</a><br>
+                        • <a href="https://www.experian.in/blogs/ask-experian/credit-education/score-basics/credit-score-factors/" target="_blank">Credit Score Factors - Experian</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5-Year Freshie Guide Tab -->
+        <div id="freshie" class="tab-content">
+            <div class="advisor-card full-width">
+                <h2 class="advisor-title">
+                    <span class="calculator-icon">🎓</span>
+                    5-Year Financial Roadmap for Fresh Graduates
+                </h2>
+                <div class="definition-box">
+                    <div class="definition-title">Fresh Graduate Financial Terms</div>
+                    <strong>Take-Home Salary:</strong> Salary after tax deductions (TDS) and other statutory deductions like PF and ESI.<br>
+                    <strong>CTC (Cost to Company):</strong> Total salary package including all benefits - your actual in-hand salary will be 70-80% of CTC.<br>
+                    <strong>Emergency Fund:</strong> 6-12 months of expenses kept in easily accessible form for unexpected situations.<br>
+                    <strong>Tax-Saving Investments:</strong> Investments under Section 80C (ELSS, PPF, EPF) that reduce your taxable income.
+                </div>
+
+                <div class="year-plan">
+                    <div class="year-header">📚 Year 1: Foundation Building (₹3-6 LPA salary range)</div>
+                    <div class="year-goals">
+                        <div class="goal-category">
+                            <div class="goal-title">💰 Financial Priorities</div>
+                            <p><strong>1. Build Emergency Fund:</strong> Save ₹2,000-5,000/month for 6 months of expenses</p>
+                            <p><strong>2. Get Health Insurance:</strong> Company policy + top-up of ₹5-10 lakhs</p>
+                            <p><strong>3. Start Credit Building:</strong> Get first credit card, use 10-20% limit, pay in full</p>
+                            <p><strong>4. Track Expenses:</strong> Use apps like Money Manager, Walnut, or simple Excel</p>
+                        </div>
+                        <div class="goal-category">
+                            <div class="goal-title">📊 Investment Strategy</div>
+                            <p><strong>Don't invest in equity yet</strong> - focus on stability first</p>
+                            <p><strong>Emergency Fund:</strong> Keep in liquid funds or savings account</p>
+                            <p><strong>Learn Basics:</strong> Read about mutual funds, SIP, compound interest</p>
+                            <p><strong>Tax Planning:</strong> Use EPF contribution for 80C benefit</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="year-plan">
+                    <div class="year-header">🚀 Year 2: Growth Phase (₹4-8 LPA salary range)</div>
+                    <div class="year-goals">
+                        <div class="goal-category">
+                            <div class="goal-title">💰 Financial Priorities</div>
+                            <p><strong>1. Start SIP:</strong> Begin with ₹2,000-5,000/month in large cap mutual funds</p>
+                            <p><strong>2. Complete Emergency Fund:</strong> Should have 6 months expenses saved</p>
+                            <p><strong>3. Optimize Taxes:</strong> Add ELSS funds for additional 80C benefits</p>
+                            <p><strong>4. Increase Credit Limit:</strong> Request credit card limit increase to improve utilization ratio</p>
+                        </div>
+                        <div class="goal-category">
+                            <div class="goal-title">📊 Investment Strategy</div>
+                            <p><strong>Asset Allocation:</strong> 70% Equity (Large Cap), 30% Debt (ELSS + EPF)</p>
+                            <p><strong>Risk Level:</strong> Conservative to Moderate - focus on large cap funds</p>
+                            <p><strong>Goal:</strong> Build investment habit and understand market volatility</p>
+                            <p><strong>Learning:</strong> Read 1 finance book per quarter, follow market news</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="year-plan">
+                    <div class="year-header">📈 Year 3: Acceleration (₹6-12 LPA salary range)</div>
+                    <div class="year-goals">
+                        <div class="goal-category">
+                            <div class="goal-title">💰 Financial Priorities</div>
+                            <p><strong>1. Increase SIP:</strong> Step up to ₹8,000-15,000/month across multiple funds</p>
+                            <p><strong>2. Diversify Portfolio:</strong> Add mid cap and small cap exposure (20-30%)</p>
+                            <p><strong>3. Term Life Insurance:</strong> Get ₹50 lakhs-1 crore term plan</p>
+                            <p><strong>4. Consider Home Purchase:</strong> Start saving for down payment if planning to buy</p>
+                        </div>
+                        <div class="goal-category">
+                            <div class="goal-title">📊 Investment Strategy</div>
+                            <p><strong>Asset Allocation:</strong> 80% Equity (40% Large + 25% Mid + 15% Small), 20% Debt</p>
+                            <p><strong>Risk Level:</strong> Moderate to Aggressive - you can handle volatility</p>
+                            <p><strong>Goal:</strong> Wealth accumulation and understanding different asset classes</p>
+                            <p><strong>Tax Optimization:</strong> Use full 80C limit (₹1.5 lakhs) + NPS (₹50k under 80CCD)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="year-plan">
+                    <div class="year-header">🏆 Year 4: Expansion (₹8-15 LPA salary range)</div>
+                    <div class="year-goals">
+                        <div class="goal-category">
+                            <div class="goal-title">💰 Financial Priorities</div>
+                            <p><strong>1. Aggressive Saving:</strong> Target 30-40% savings rate (₹20,000-40,000/month)</p>
+                            <p><strong>2. Goal-Based Investing:</strong> Separate funds for house, higher education, travel</p>
+                            <p><strong>3. Premium Credit Cards:</strong> Upgrade to premium cards with score 750+</p>
+                            <p><strong>4. International Exposure:</strong> Add international funds (5-10% allocation)</p>
+                        </div>
+                        <div class="goal-category">
+                            <div class="goal-title">📊 Investment Strategy</div>
+                            <p><strong>Asset Allocation:</strong> 75% Equity + 20% Debt + 5% Gold/International</p>
+                            <p><strong>Risk Level:</strong> Aggressive - maximize growth potential</p>
+                            <p><strong>Advanced Strategies:</strong> Direct equity, sector funds, international diversification</p>
+                            <p><strong>Real Estate:</strong> Consider REITs as alternative to direct property investment</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="year-plan">
+                    <div class="year-header">💎 Year 5: Optimization (₹10-20 LPA salary range)</div>
+                    <div class="year-goals">
+                        <div class="goal-category">
+                            <div class="goal-title">💰 Financial Priorities</div>
+                            <p><strong>1. Financial Independence Track:</strong> Should have 3-5x annual salary saved</p>
+                            <p><strong>2. Advanced Tax Planning:</strong> Use NPS, health insurance, home loan for tax optimization</p>
+                            <p><strong>3. Multiple Income Streams:</strong> Consider side hustles, freelancing, or passive income</p>
+                            <p><strong>4. Estate Planning:</strong> Create will, nominee arrangements for all investments</p>
+                        </div>
+                        <div class="goal-category">
+                            <div class="goal-title">📊 Investment Strategy</div>
+                            <p><strong>Sophisticated Portfolio:</strong> Individual stocks, sector rotation, value investing</p>
+                            <p><strong>Alternative Investments:</strong> Gold bonds, REITs, international markets</p>
+                            <p><strong>Rebalancing:</strong> Quarterly portfolio review and rebalancing</p>
+                            <p><strong>Financial Goals:</strong> Clear roadmap for next 5 years (marriage, house, etc.)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="advice-section">
+                    <div class="advice-title">🎯 Key Milestones to Track</div>
+                    <div class="recommendation-card">
+                        <div class="recommendation-title">Financial Health Checkpoints</div>
+                        <p><strong>Year 1:</strong> ₹50,000-1 lakh emergency fund + Credit score 650+</p>
+                        <p><strong>Year 2:</strong> ₹2-5 lakhs in investments + Credit score 700+</p>
+                        <p><strong>Year 3:</strong> ₹8-15 lakhs in investments + Credit score 750+</p>
+                        <p><strong>Year 4:</strong> ₹20-40 lakhs in investments + Multiple credit cards</p>
+                        <p><strong>Year 5:</strong> ₹50+ lakhs net worth + Clear 10-year financial plan</p>
+                    </div>
+                </div>
+
+                <div class="data-sources">
+                    <h4>Fresh Graduate Financial Resources:</h4>
+                    • <a href="https://zerodha.com/varsity/" target="_blank">Complete Finance Education - Zerodha Varsity</a><br>
+                    • <a href="https://www.livemint.com/money/personal-finance" target="_blank">Personal Finance News - LiveMint</a><br>
+                    • <a href="https://cleartax.in/s/income-tax-slabs" target="_blank">Tax Planning Guide - ClearTax</a><br>
+                    • <a href="https://www.amfiindia.com/investor-corner/knowledge-center" target="_blank">Mutual Fund Basics - AMFI</a><br>
+                    • <a href="https://www.nsdl.co.in/pan-aadhaar-link/index.php" target="_blank">PAN-Aadhaar Linking - NSDL</a>
+                </div>
+            </div>
+        </div>
+
         <div class="tips">
             <h3>💡 Smart Money Tips</h3>
             <div class="tips-grid">
                 <div class="tip-item">
                     <strong>50-30-20 Rule - Foundation of Budgeting:</strong>
-                    Allocate 50% of income to needs (rent, groceries, utilities), 30% to wants (dining, entertainment), and 20% to savings & investments. This simple rule ensures balanced financial health.
+                    Allocate 50% of income to needs (rent, groceries, utilities), 30% to wants (dining, entertainment), and 20% to savings & investments. This simple rule ensures balanced financial health and sustainable spending habits.
                 </div>
                 <div class="tip-item">
                     <strong>Asset Allocation by Age:</strong>
-                    Age 20s: 80% Equity, 20% Debt | Age 30s: 70% Equity, 30% Debt | Age 40s: 60% Equity, 40% Debt. Gradually reduce equity exposure as you age.
+                    Age 20s: 80% Equity, 20% Debt | Age 30s: 70% Equity, 30% Debt | Age 40s: 60% Equity, 40% Debt. Gradually reduce equity exposure as you age to preserve capital closer to retirement.
                 </div>
                 <div class="tip-item">
                     <strong>Emergency Fund Rule:</strong>
-                    Keep 6-12 months expenses in liquid funds or savings account. This should be your first financial goal before any investments.
+                    Keep 6-12 months expenses in liquid funds or savings account. This should be your first financial goal before any investments. Emergency fund protects you from debt during unexpected situations.
                 </div>
                 <div class="tip-item">
                     <strong>Tax-Saving Strategy:</strong>
-                    Use ELSS, PPF, EPF, and NPS to save up to ₹2 lakh in taxes annually under various sections. ELSS offers market-linked returns with 3-year lock-in.
+                    Use ELSS, PPF, EPF, and NPS to save up to ₹2 lakh in taxes annually under various sections. ELSS offers market-linked returns with 3-year lock-in period, making it ideal for young investors.
                 </div>
                 <div class="tip-item">
                     <strong>SIP Power & Growth:</strong>
-                    Start SIP with ₹500/month. Incrementally increase the monthly amount by 10-15% year-on-year as your income grows. This step-up approach accelerates wealth creation through rupee cost averaging.
+                    Start SIP with ₹500/month. Incrementally increase the monthly amount by 10-15% year-on-year as your income grows. This step-up approach accelerates wealth creation through rupee cost averaging and compound growth.
                 </div>
                 <div class="tip-item">
                     <strong>Debt Management:</strong>
-                    Pay off high-interest debt (credit cards: 36-42% APR) first. If loan interest > expected returns, prepay the loan rather than investing.
+                    Pay off high-interest debt (credit cards: 36-42% APR) first. If loan interest > expected returns, prepay the loan rather than investing. Good debt (home loans, education loans) can coexist with investments.
                 </div>
                 <div class="tip-item">
                     <strong>Insurance Rule:</strong>
-                    Term life insurance = 10-15x annual income. Health insurance = ₹5-10 lakhs minimum per family member. Don't mix insurance with investment.
+                    Term life insurance = 10-15x annual income. Health insurance = ₹5-10 lakhs minimum per family member. Don't mix insurance with investment - keep them separate for better returns.
                 </div>
                 <div class="tip-item">
                     <strong>Government Bonds Strategy:</strong>
-                    RBI Floating Rate Bonds (8.05% current rate) offer inflation protection with 6-month rate resets. Ideal for conservative portfolios seeking steady income with sovereign guarantee.
+                    RBI Floating Rate Bonds (8.05% current rate) offer inflation protection with 6-month rate resets. Ideal for conservative portfolios seeking steady income with sovereign guarantee and tax efficiency.
                 </div>
             </div>
         </div>
@@ -980,11 +1382,11 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2025 Smart Financial Assistant. AI-powered financial planning for everyone.</p>
+            <p>&copy; 2025 Smart Financial Assistant. Comprehensive financial planning for everyone.</p>
             <div class="creator-info">
                 <p><strong>Disclaimer:</strong> This tool is for educational purposes only. All calculations use standard financial formulas and current market data. Consult a qualified financial advisor for personalized investment advice. | 
-                <a href="mailto:yuvikaagrawal04@gmail.com">Contact Me</a> | 
-                <a href="www.linkedin.com/in/yuvikaagrawal04" target="_blank">LinkedIn</a></p>
+                <a href="mailto:yuvikaagrawal04@gmail.com">yuvikaagrawal04@gmail.com</a> | 
+                <a href="https://www.linkedin.com/in/yuvikaagrawal04" target="_blank">LinkedIn</a></p>
                 <p style="margin-top: 0.5rem; font-size: 0.9rem;">
                     🚀 Built with authentic financial formulas and real market data • All sources referenced and linked
                 </p>
@@ -1028,6 +1430,41 @@
             }).format(amount);
         }
 
+        function createChart(canvasId, type, data, options = {}) {
+            const canvas = document.getElementById(canvasId);
+            if (canvas.chart) {
+                canvas.chart.destroy();
+            }
+            
+            const ctx = canvas.getContext('2d');
+            canvas.chart = new Chart(ctx, {
+                type: type,
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#e0e6ed'
+                            }
+                        }
+                    },
+                    scales: type !== 'doughnut' && type !== 'pie' ? {
+                        x: {
+                            ticks: { color: '#8892b0' },
+                            grid: { color: 'rgba(100, 255, 218, 0.1)' }
+                        },
+                        y: {
+                            ticks: { color: '#8892b0' },
+                            grid: { color: 'rgba(100, 255, 218, 0.1)' }
+                        }
+                    } : {},
+                    ...options
+                }
+            });
+        }
+
         // Authentic EMI calculation using the standard mathematical formula
         function calculateEMI() {
             const loanAmount = parseFloat(document.getElementById('loanAmount').value);
@@ -1037,6 +1474,7 @@
             if (!loanAmount || !interestRate || !loanTenure) {
                 document.getElementById('emiResult').innerHTML = 'Please fill all fields';
                 document.getElementById('emiResult').className = 'result empty';
+                document.getElementById('emiChart').style.display = 'none';
                 return;
             }
             
@@ -1065,6 +1503,18 @@
                     '👍 Interest amount is reasonable for this tenure.'}
                 </div>`;
             document.getElementById('emiResult').className = 'result calculated';
+            
+            // Create EMI breakdown chart
+            document.getElementById('emiChart').style.display = 'block';
+            createChart('emiChartCanvas', 'doughnut', {
+                labels: ['Principal Amount', 'Total Interest'],
+                datasets: [{
+                    data: [loanAmount, totalInterest],
+                    backgroundColor: ['#64ffda', '#ff6b6b'],
+                    borderColor: ['#4fc3f7', '#ff5252'],
+                    borderWidth: 2
+                }]
+            });
         }
 
         function calculateInvestment() {
@@ -1076,6 +1526,7 @@
             if (!returnRate || !timePeriod) {
                 document.getElementById('investmentResult').innerHTML = 'Please fill required fields';
                 document.getElementById('investmentResult').className = 'result empty';
+                document.getElementById('investmentChart').style.display = 'none';
                 return;
             }
             
@@ -1120,6 +1571,38 @@
                     '💪 Keep investing regularly to harness the power of compounding.'}
                 </div>`;
             document.getElementById('investmentResult').className = 'result calculated';
+            
+            // Create investment growth chart
+            document.getElementById('investmentChart').style.display = 'block';
+            const years = [];
+            const investmentValues = [];
+            const gainValues = [];
+            
+            for (let year = 1; year <= timePeriod; year++) {
+                years.push(`Year ${year}`);
+                const yearlyInvestment = principal + (sipAmount * year * 12);
+                const yearlyFutureValue = (principal * Math.pow(1 + returnRate/100, year)) + 
+                    (sipAmount > 0 ? sipAmount * (Math.pow(1 + monthlyRate, year * 12) - 1) / monthlyRate : 0);
+                investmentValues.push(yearlyInvestment);
+                gainValues.push(yearlyFutureValue - yearlyInvestment);
+            }
+            
+            createChart('investmentChartCanvas', 'line', {
+                labels: years,
+                datasets: [{
+                    label: 'Total Investment',
+                    data: investmentValues,
+                    borderColor: '#64ffda',
+                    backgroundColor: 'rgba(100, 255, 218, 0.1)',
+                    tension: 0.1
+                }, {
+                    label: 'Total Gains',
+                    data: gainValues,
+                    borderColor: '#4fc3f7',
+                    backgroundColor: 'rgba(79, 195, 247, 0.1)',
+                    tension: 0.1
+                }]
+            });
         }
 
         function calculateBudget() {
@@ -1130,6 +1613,7 @@
             if (!income) {
                 document.getElementById('budgetResult').innerHTML = 'Please enter your monthly income';
                 document.getElementById('budgetResult').className = 'result empty';
+                document.getElementById('budgetChart').style.display = 'none';
                 return;
             }
             
@@ -1177,6 +1661,18 @@
                 • Savings/Investment (20%): ${formatCurrency(income * 0.2)}
                 </div>`;
             document.getElementById('budgetResult').className = 'result calculated';
+            
+            // Create budget breakdown chart
+            document.getElementById('budgetChart').style.display = 'block';
+            createChart('budgetChartCanvas', 'doughnut', {
+                labels: ['Essential Expenses', 'Discretionary Expenses', 'Savings'],
+                datasets: [{
+                    data: [essential, discretionary, surplus > 0 ? surplus : 0],
+                    backgroundColor: ['#ff6b6b', '#feca57', '#64ffda'],
+                    borderColor: ['#ff5252', '#ff9f43', '#4fc3f7'],
+                    borderWidth: 2
+                }]
+            });
         }
 
         function generatePersonalizedAdvice() {
@@ -1327,12 +1823,14 @@
             if (totalWeight === 0) {
                 document.getElementById('portfolioResult').innerHTML = 'Please enter asset allocation weights';
                 document.getElementById('portfolioResult').className = 'advice empty';
+                document.getElementById('portfolioChart').style.display = 'none';
                 return;
             }
 
             if (Math.abs(totalWeight - 100) > 0.1) {
                 document.getElementById('portfolioResult').innerHTML = `⚠️ Weights sum to ${totalWeight.toFixed(1)}%. Please adjust to total 100%.`;
                 document.getElementById('portfolioResult').className = 'advice empty';
+                document.getElementById('portfolioChart').style.display = 'none';
                 return;
             }
 
@@ -1436,6 +1934,32 @@
 
             document.getElementById('portfolioResult').innerHTML = result;
             document.getElementById('portfolioResult').className = 'advice generated';
+            
+            // Create portfolio allocation chart
+            document.getElementById('portfolioChart').style.display = 'block';
+            const activeAssets = Object.keys(weights).filter(asset => weights[asset] > 0);
+            const activeWeights = activeAssets.map(asset => weights[asset]);
+            const assetLabels = activeAssets.map(asset => {
+                const labels = {
+                    largecap: 'Large Cap',
+                    midcap: 'Mid Cap', 
+                    smallcap: 'Small Cap',
+                    debt: 'Debt Funds',
+                    gold: 'Gold',
+                    international: 'International'
+                };
+                return labels[asset];
+            });
+            
+            createChart('portfolioChartCanvas', 'doughnut', {
+                labels: assetLabels,
+                datasets: [{
+                    data: activeWeights,
+                    backgroundColor: ['#64ffda', '#4fc3f7', '#26c6da', '#80deea', '#ffb74d', '#ff8a65'],
+                    borderColor: ['#4fc3f7', '#26c6da', '#00acc1', '#26c6da', '#ff9800', '#ff5722'],
+                    borderWidth: 2
+                }]
+            });
         }
 
         function calculateRetirement() {
@@ -1447,6 +1971,7 @@
             if (!currentAge || !retirementAge || !currentExpenses || !inflationRate) {
                 document.getElementById('retirementResult').innerHTML = 'Please fill all fields';
                 document.getElementById('retirementResult').className = 'result empty';
+                document.getElementById('retirementChart').style.display = 'none';
                 return;
             }
             
@@ -1470,6 +1995,31 @@
                 ${monthlyTarget > 50000 ? '⚠️ Target seems high. Consider reducing expenses or working longer.' : '✅ Achievable target with disciplined investing.'}
                 </div>`;
             document.getElementById('retirementResult').className = 'result calculated';
+            
+            // Create retirement growth chart
+            document.getElementById('retirementChart').style.display = 'block';
+            const years = [];
+            const corpusValues = [];
+            
+            for (let year = 1; year <= yearsToRetirement; year++) {
+                years.push(`Year ${year}`);
+                const monthlyRate = 0.12 / 12;
+                const months = year * 12;
+                const futureValue = monthlyTarget * (Math.pow(1 + monthlyRate, months) - 1) / monthlyRate;
+                corpusValues.push(futureValue / 100000); // Convert to lakhs for readability
+            }
+            
+            createChart('retirementChartCanvas', 'line', {
+                labels: years,
+                datasets: [{
+                    label: 'Retirement Corpus (₹ Lakhs)',
+                    data: corpusValues,
+                    borderColor: '#64ffda',
+                    backgroundColor: 'rgba(100, 255, 218, 0.1)',
+                    tension: 0.1,
+                    fill: true
+                }]
+            });
         }
 
         function calculateHomePurchase() {
@@ -1553,6 +2103,135 @@
                 ${monthlyTarget > 25000 ? '⚠️ High monthly target. Consider education loans to supplement.' : '✅ Achievable target with early planning.'}
                 </div>`;
             document.getElementById('educationResult').className = 'result calculated';
+        }
+
+        function analyzeCreditProfile() {
+            const currentScore = parseInt(document.getElementById('currentCreditScore').value) || 0;
+            const creditLimit = parseFloat(document.getElementById('creditCardLimit').value) || 0;
+            const creditUsage = parseFloat(document.getElementById('creditCardUsage').value) || 0;
+            const creditAge = parseFloat(document.getElementById('creditAge').value) || 0;
+            const paymentHistory = document.getElementById('paymentHistory').value;
+            
+            if (!creditLimit && !creditUsage && !creditAge && !paymentHistory) {
+                document.getElementById('creditResult').innerHTML = 'Please fill at least some fields to analyze your credit profile';
+                document.getElementById('creditResult').className = 'advice empty';
+                return;
+            }
+            
+            let utilizationRatio = 0;
+            if (creditLimit > 0) {
+                utilizationRatio = (creditUsage / creditLimit) * 100;
+            }
+            
+            let scoreRange = '';
+            let scoreColor = '';
+            let scoreAdvice = '';
+            
+            if (currentScore >= 750) {
+                scoreRange = 'Excellent';
+                scoreColor = 'score-excellent';
+                scoreAdvice = 'Outstanding credit score! You qualify for the best interest rates and premium credit products.';
+            } else if (currentScore >= 700) {
+                scoreRange = 'Good';
+                scoreColor = 'score-good';
+                scoreAdvice = 'Good credit score. Work on maintaining low utilization and timely payments to reach excellent range.';
+            } else if (currentScore >= 650) {
+                scoreRange = 'Fair';
+                scoreColor = 'score-fair';
+                scoreAdvice = 'Fair credit score. Focus on reducing utilization below 30% and never missing payments.';
+            } else if (currentScore >= 600) {
+                scoreRange = 'Poor';
+                scoreColor = 'score-poor';
+                scoreAdvice = 'Poor credit score. Prioritize building payment history and reducing debt.';
+            } else if (currentScore > 0) {
+                scoreRange = 'Bad';
+                scoreColor = 'score-bad';
+                scoreAdvice = 'Low credit score. Consider secured credit cards and focus on rebuilding credit history.';
+            }
+            
+            let advice = `<div class="advice-section">
+                <div class="advice-title">📊 Your Credit Profile Analysis</div>`;
+            
+            if (currentScore > 0) {
+                advice += `<div class="score-item ${scoreColor}" style="margin: 1rem auto; max-width: 200px;">
+                    <div class="market-value">${currentScore}</div>
+                    <div class="market-label">${scoreRange} Credit</div>
+                </div>
+                <p><strong>Current Status:</strong> ${scoreAdvice}</p><br>`;
+            }
+            
+            if (creditLimit > 0) {
+                advice += `<div class="recommendation-card">
+                    <div class="recommendation-title">💳 Credit Utilization Analysis</div>
+                    <p><strong>Current Utilization:</strong> ${utilizationRatio.toFixed(1)}% (₹${formatCurrency(creditUsage)} of ₹${formatCurrency(creditLimit)})</p>
+                    ${utilizationRatio > 30 ? 
+                        '<p>⚠️ High utilization! Keep below 30% to improve score. Pay down balances or request limit increases.</p>' :
+                        utilizationRatio > 10 ?
+                        '<p>👍 Good utilization range. Ideal is below 10% for maximum score benefit.</p>' :
+                        '<p>✅ Excellent utilization! This is helping your credit score significantly.</p>'
+                    }
+                </div>`;
+            }
+            
+            if (creditAge > 0) {
+                advice += `<div class="recommendation-card">
+                    <div class="recommendation-title">📅 Credit History Analysis</div>
+                    <p><strong>Credit Age:</strong> ${creditAge} years</p>
+                    ${creditAge < 2 ? 
+                        '<p>📈 Building credit history. Keep accounts active and be patient - length of history improves over time.</p>' :
+                        creditAge < 5 ?
+                        '<p>👍 Decent credit history. Continue maintaining accounts to strengthen this factor.</p>' :
+                        '<p>✅ Strong credit history! This is a major positive factor for your score.</p>'
+                    }
+                </div>`;
+            }
+            
+            if (paymentHistory) {
+                advice += `<div class="recommendation-card">
+                    <div class="recommendation-title">📋 Payment History Assessment</div>`;
+                
+                switch(paymentHistory) {
+                    case 'excellent':
+                        advice += '<p>✅ Perfect payment history! This is the most important factor (35% of score).</p>';
+                        break;
+                    case 'good':
+                        advice += '<p>👍 Good payment history. Aim for 100% on-time payments for maximum score benefit.</p>';
+                        break;
+                    case 'fair':
+                        advice += '<p>⚠️ Some late payments are hurting your score. Set up auto-pay to never miss due dates.</p>';
+                        break;
+                    case 'poor':
+                        advice += '<p>🚨 Poor payment history is severely impacting your score. Focus on timely payments from now on.</p>';
+                        break;
+                }
+                advice += '</div>';
+            }
+            
+            // Action plan based on profile
+            advice += `<div class="recommendation-card">
+                <div class="recommendation-title">🎯 Immediate Action Plan</div>
+                <p><strong>Top Priorities:</strong></p>`;
+            
+            if (utilizationRatio > 30) {
+                advice += '<p>1. Pay down credit card balances to below 30% utilization</p>';
+            }
+            if (paymentHistory === 'poor' || paymentHistory === 'fair') {
+                advice += '<p>1. Set up auto-pay for all credit accounts</p>';
+            }
+            if (creditAge < 2) {
+                advice += '<p>2. Keep your oldest credit account active</p>';
+            }
+            if (currentScore < 700) {
+                advice += '<p>3. Monitor credit report monthly for errors</p>';
+            }
+            if (creditLimit < 100000) {
+                advice += '<p>4. Request credit limit increases every 6 months</p>';
+            }
+            
+            advice += `</div></div>`;
+            
+            document.getElementById('creditResult').innerHTML = advice;
+            document.getElementById('creditResult').className = 'advice generated';
         }
 
         // Show/hide custom education cost field
